@@ -1,0 +1,26 @@
+name: Build WinDroid ISO
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Tools
+        run: |
+          sudo apt update
+          sudo apt install -y live-build cdebootstrap squashfs-tools xorriso
+
+      - name: Build ISO
+        run: |
+          chmod +x build.sh
+          sudo ./build.sh
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinDroid-ISO
+          path: WinDroid-Lite.iso
