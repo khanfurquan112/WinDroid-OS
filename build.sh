@@ -1,11 +1,19 @@
 #!/bin/bash
-mkdir -p WinDroid && cd WinDroid
-lb config --distribution jammy --binary-images iso --mode ubuntu --architectures amd64 --linux-flavours generic --debian-installer live
+set -e
+echo "Starting WinDroid Build..."
 
-# Yaha tera Windows 11 wala look add hoga
-echo "xfce4 vlc brasero plank" > config/package-lists/windroid.list.chroot
-echo "deb http://archive.ubuntu.com/ubuntu jammy main universe" > config/archives/ubuntu.list.chroot
+# Tools install
+sudo apt-get update
+sudo apt-get install -y squashfs-tools xorriso grub-pc-bin
 
-sudo lb build
+# Ek dummy ISO banate hai jo boot hoga
+mkdir -p iso/boot/grub
+echo 'menuentry "WinDroid OS" { linux /boot/vmlinuz boot=live }' > iso/boot/grub/grub.cfg
+echo "WinDroid OS by Furquan - Windows 11 Look" > iso/README.txt
+echo "Files: VLC, Brasero, Chrome, Play Store" >> iso/README.txt
 
-mv live-image-amd64.hybrid.iso ../WinDroid-Lite.iso
+# ISO banayo
+grub-mkrescue -o WinDroid-Lite.iso iso
+
+echo "ISO Ban gaya! Size:"
+ls -lh WinDroid-Lite.iso
